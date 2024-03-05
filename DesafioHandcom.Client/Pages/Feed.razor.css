@@ -1,0 +1,42 @@
+﻿.post {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+.post-header {
+    margin-bottom: 10px;
+}
+
+    .post-header h2 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+.post-date {
+    font-size: 14px;
+    color: #666;
+}
+
+.post-content {
+    margin-bottom: 10px;
+}
+
+    .post-content p {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-author,
+.post-topic {
+    font-size: 14px;
+    color: #333;
+}

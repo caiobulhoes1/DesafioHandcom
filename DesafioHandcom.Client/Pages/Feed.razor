@@ -1,0 +1,45 @@
+﻿@page "/feed"
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<PageTitle>Feed</PageTitle>
+
+<h1>Feed</h1>
+
+<button @onclick="NovaPostagem">Nova Postagem</button>
+
+@foreach (var post in ListPosts)
+{
+    <div class="post">
+        <div class="post-header">
+            <h2>@post.Title</h2>
+            <span class="post-date">@post.CreatedAt.ToString("dd/MM/yyyy")</span>
+        </div>
+        <div class="post-content">
+            <p>@post.Content</p>
+        </div>
+        <div class="post-footer">
+            <div class="post-author">Author: @post.Author.Name</div>
+            <div class="post-topic">Topic: @post.Topic.Name</div>
+        </div>
+    </div>
+}
+
+@code {
+	List<PostViewModel> ListPosts = new List<PostViewModel>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await Http.GetFromJsonAsync<List<PostViewModel>>("GetPosts");
+		if (result != null)
+			ListPosts = result;
+
+	}
+
+	async Task NovaPostagem()
+	{
+		NavManager.NavigateTo("/novapostagem");
+	}
+}

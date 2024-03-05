@@ -31,7 +31,7 @@ namespace DesafioHandcom.Server.Controllers
 			else
 			{
 				//Inicia criação do Token Jwt
-				var token = _service.Create(user);
+				var token = _service.Create(getUser);
 				Response.Headers.Add("Authorization", "Bearer " + token);
 				return Ok();
 			}

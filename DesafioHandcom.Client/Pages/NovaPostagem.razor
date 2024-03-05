@@ -1,0 +1,75 @@
+﻿@page "/novapostagem"
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<PageTitle>Nova Postagem</PageTitle>
+
+<h1>Nova Postagem</h1>
+
+<EditForm Context="NovaPostagem" Model="post" OnSubmit="NewPost">
+	<div class="input">
+		<label for="title">Título:</label>
+		<input type="text" id="Title" @bind-value="post.Title" placeholder="Title" required><br><br>
+		<label for="content">Conteúdo:</label>
+		<input type="text" id="Content" @bind-value="post.Content" placeholder="Content" required><br><br>
+		<select class="form-select" @bind="post.TopicId" required>
+			<option value="">Selecione uma Opção</option>
+			@foreach (var topic in topics)
+			{
+				<option value="@topic.Id">@topic.Name</option>
+			}
+		</select><br>
+		<input class="btnLogin" type="submit" value="Finalizar Postagem">
+	</div>
+</EditForm>
+
+
+@code {
+	private string NomeUser = "";
+	private string IdUser = string.Empty;
+
+	PostModel post = new PostModel();
+	List<TopicModel> topics = new List<TopicModel>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		//Resgata o usuário logado.
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
+		IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
+
+
+		//Resgata os Topicos cadastrados no banco de dados
+		var result = await Http.GetFromJsonAsync<List<TopicModel>>("GetTopics");
+		if (result != null)
+			topics = result;
+	}
+
+	async Task NewPost()
+	{
+		post.AuthorId = int.Parse(IdUser);
+		post.CreatedAt = DateTime.Now;
+
+		try
+		{
+			//Faz requisição post para adicionar postagem
+			var result = await Http.PostAsJsonAsync("/api/posts", post);
+			if (result.IsSuccessStatusCode)
+			{
+				//Postagem Criada
+			}
+			else
+			{
+				//Erro ao criar postagem
+			}
+			NavManager.NavigateTo("/feed");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+	}
+}

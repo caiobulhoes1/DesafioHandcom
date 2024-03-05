@@ -3,6 +3,8 @@ using DesafioHandcom;
 using DesafioHandcom.Client;
 using DesafioHandcom.Configuration;
 using DesafioHandcom.Data;
+using DesafioHandcom.Server.Interface;
+using DesafioHandcom.Server.Repository;
 using DesafioHandcom.Server.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 //Adicionando Banco de dados InMemory
 builder.Services.AddDbContext<AppDbContext>(x => x.UseInMemoryDatabase("DesafioHandcom"));
@@ -21,15 +21,23 @@ using (var scope = builder.Services.BuildServiceProvider().CreateScope())
 	var serviceProvider = scope.ServiceProvider;
 	var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
 
-	// Adicione dados mock aqui
-	dbContext.Users.Add(new UserModel { Id = 1, Name = "Exemplo", Email = "exemplo@example.com", Password = "Teste", CreatedAt = DateTime.Now });
+	// Dados Mock
+	dbContext.Users.Add(new UserModel { Id = 1, Name = "User 1", Email = "user1@handcom.com", Password = "user1", CreatedAt = DateTime.Now });
+	dbContext.Users.Add(new UserModel { Id = 2, Name = "User 2", Email = "user2@handcom.com", Password = "user2", CreatedAt = DateTime.Now });
+
+    dbContext.Topics.Add(new TopicModel { Id = 1, Name = "Carro" });
+	dbContext.Topics.Add(new TopicModel { Id = 2, Name = "Futebol" });
+	dbContext.Topics.Add(new TopicModel { Id = 3, Name = "Tecnologia" });
 
 	// Salva as alterações no banco de dados
 	dbContext.SaveChanges();
 }
 
+//Adiciona Instancia do Serviço
+builder.Services.AddScoped<IUser, UserRepository>();
+builder.Services.AddScoped<IPost, PostRepository>();
+builder.Services.AddScoped<ITopic, TopicRepository>();
 builder.Services.AddTransient<JwtService>();
-
 builder.Services.AddScoped<CustomAuthProvider>();
 
 builder.Services.AddControllersWithViews();
