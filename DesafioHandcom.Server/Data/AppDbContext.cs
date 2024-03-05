@@ -8,12 +8,12 @@ namespace DesafioHandcom.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<PostModel>()
+			modelBuilder.Entity<PostViewModel>()
 				.HasOne(p => p.Author)
 				.WithMany()
 				.HasForeignKey(p => p.AuthorId);
 
-			modelBuilder.Entity<PostModel>()
+			modelBuilder.Entity<PostViewModel>()
 				.HasOne(p => p.Topic)
 				.WithMany()
 				.HasForeignKey(p => p.TopicId);
