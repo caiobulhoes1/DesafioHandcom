@@ -1,0 +1,6 @@
+@DesafioHandcom.Server_HostAddress = http://localhost:5076
+
+GET {{DesafioHandcom.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

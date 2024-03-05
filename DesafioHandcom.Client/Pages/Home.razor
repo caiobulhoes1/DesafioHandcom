@@ -1,0 +1,46 @@
+﻿@page "/"
+@using DesafioHandcom
+@using Blazored.LocalStorage;
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+
+<PageTitle>Home</PageTitle>
+<CascadingAuthenticationState>
+	<AuthorizeView>
+		<Authorized>
+			Você está autorizado.
+		</Authorized>
+		<NotAuthorized>
+			<h1>Efetuar Login</h1>
+
+			<EditForm Context="Login" Model="userlogin" OnSubmit="EfetuarLogin">
+				<div class="input">
+					<input type="email" id="Email" @bind-value="userlogin.Email" placeholder="Email" required><br><br>
+					<input type="password" id="Senha" @bind-value="userlogin.Password" placeholder="Password"><br><br>
+					<input class="btnLogin" type="submit" value="Logar">
+				</div>
+			</EditForm>
+		</NotAuthorized>
+
+	</AuthorizeView>
+</CascadingAuthenticationState>
+@code {
+	UserModel userlogin = new UserModel();
+
+	async Task EfetuarLogin()
+	{
+		var result = await Http.PostAsJsonAsync("/efetuarlogin", userlogin);
+		if (result.IsSuccessStatusCode)
+		{
+			var token = result.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+			await LocalStorage.SetItemAsync("token", token);
+			var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+			if (authState.User.Identity.IsAuthenticated)
+				NavManager.NavigateTo("/");
+		}
+	}
+}
