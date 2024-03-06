@@ -18,12 +18,12 @@ namespace DesafioHandcom.Data
 				.WithMany()
 				.HasForeignKey(p => p.TopicId);
 
-			modelBuilder.Entity<CommentModel>()
+			modelBuilder.Entity<CommentViewModel>()
 				.HasOne(c => c.Author)
 				.WithMany()
 				.HasForeignKey(c => c.AuthorId);
 
-			modelBuilder.Entity<CommentModel>()
+			modelBuilder.Entity<CommentViewModel>()
 				.HasOne(c => c.Post)
 				.WithMany()
 				.HasForeignKey(c => c.PostId);
