@@ -5,33 +5,42 @@
 @inject NavigationManager NavManager
 
 <PageTitle>Feed</PageTitle>
-
-<h1>Feed</h1>
-
-<button @onclick="NovaPostagem">Nova Postagem</button>
-
-<div class="formFilter">
-    <input type="text" class="FiltroAutor" id="Nome" @bind-value="filtro" @oninput="Filtrar" placeholder="Filtrar por Autor"><br>
+<div class="title">
+	<h1>Feed</h1>
 </div>
 
-@foreach (var post in ListPostsFiltered)
+<button class="btnNewPost" @onclick="NovaPostagem">Nova Postagem</button>
+
+@if (ListPosts.Any())
 {
-    <div class="post">
-        <div class="post-header">
-            <h2>@post.Title</h2>
-            <span class="post-date">@post.CreatedAt.ToString("dd/MM/yyyy")</span>
+	<div class="filtro">
+		<input type="text" class="FiltroAutor" id="Nome" @bind-value="filtro" @oninput="Filtrar" placeholder="Filtrar por Autor"><br>
+	</div>
+
+	@foreach (var post in ListPostsFiltered)
+	{
+		<div class="post">
+    <div class="post-footer">
+        <div class="post-author">
+            <span class="author-name" @onclick="() => AuthorProfile(post.Author.Id)">@post.Author.Name</span>
         </div>
-        <div class="post-content">
-            <p>@post.Content</p>
-        </div>
-        <div class="post-footer">
-            <div class="post-author">Author: <span class="author-name" @onclick="() => AuthorProfile(post.Author.Id)">@post.Author.Name</span></div>
-            <div class="post-topic">Topic: @post.Topic.Name</div>
-        </div>
-        <div class="comments">
-            <h3>Comments</h3>
+		    <div class="post-header">
+		<div class="post-topic">@post.Topic.Name</div>
+        <span class="post-date"> - @post.CreatedAt.ToString("dd/MM/yyyy")</span>        			
+    </div>
+        
+    </div>
+
+    <div class="post-content">
+		<h2 class="post-title">@post.Title</h2>	
+        <p>@post.Content</p>
+    </div>
+    <div class="comments">
+        @* <h3>Comments</h3> *@
+        @if (post.Comments.Any())
+        {
             @foreach (var comment in post.Comments)
-            {
+            {										
                 <div class="comment">
                     <div class="comment-header">
                         <span class="comment-author" @onclick="() => AuthorProfile(comment.Author.Id)">@comment.Author.Name</span>
@@ -40,148 +49,161 @@
                     <div class="comment-content">
                         <p>@comment.Content</p>
                     </div>
-                </div>
+                </div>					
             }
-        </div>
-        <div class="add-comment">
-            <h3>Add Comment</h3>
-            <form @onsubmit="async () => await AddComment(post.Id)">
-                <div class="form-group">
-                    <textarea id="commentContent" rows="4" @bind="newCommentContent"></textarea>
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+        }
+        else
+        {
+            <div>
+                <span>Não há nenhum comentário.</span>
+            </div>
+        }				
     </div>
-}
-
-<div class="pagination">
-    <button disabled="@IsFirstPage()" @onclick="PreviousPage">Previous</button>
-    <span>Page @(pageIndex + 1) of @(totalPages)</span>
-    <button disabled="@IsLastPage()" @onclick="NextPage">Next</button>
+    <div class="add-comment">
+@*         <h3>Add Comment</h3> *@
+        <form @onsubmit="async () => await AddComment(post.Id)">
+            <div class="form-group">
+                <textarea id="commentContent" rows="4" @bind="newCommentContent" placeholder="Adicionar novo comentário" required></textarea>
+            </div>
+            <button class="btnSubmit" type="submit">Comentar</button>
+        </form>
+    </div>
 </div>
+	}
 
+	<div class="pagination">
+		<button disabled="@IsFirstPage()" @onclick="PreviousPage">Previous</button>
+		<span>Page @(pageIndex + 1) of @(totalPages)</span>
+		<button disabled="@IsLastPage()" @onclick="NextPage">Next</button>
+	</div>
+}
+else
+{
+	<div class="msg">
+		<h1>Não há nenhum post criado</h1
+	</div>
+}
 @code {
-    List<PostViewModel> ListPosts = new List<PostViewModel>();
-    List<PostViewModel> ListPostsFiltered = new List<PostViewModel>();
+	List<PostViewModel> ListPosts = new List<PostViewModel>();
+	List<PostViewModel> ListPostsFiltered = new List<PostViewModel>();
 
-    private int pageIndex = 0;
-    private int pageSize = 2;
-    private string NomeUser = string.Empty;
-    private string filtro = "";
-    private string IdUser = string.Empty;
-    private string newCommentContent = string.Empty;
-    private int totalPages;
+	private int pageIndex = 0;
+	private int pageSize = 1;
+	private string NomeUser = string.Empty;
+	private string filtro = "";
+	private string IdUser = string.Empty;
+	private string newCommentContent = string.Empty;
+	private int totalPages;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
-        IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
+		IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
 
-        var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
-        if (result != null)
-            ListPosts = result;
-            ListPostsFiltered = ListPosts
-            .Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToList();
+		var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
+		if (result != null)
+			ListPosts = result;
+		ListPostsFiltered = ListPosts
+		.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+			.Skip(pageIndex * pageSize)
+			.Take(pageSize)
+			.ToList();
 
-        totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
-    }
+		totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
+	}
 
-    async Task AuthorProfile(int authorId)
-    {
-        try
-        {
-            var userProfileUrl = $"/userprofile/{authorId}";
-            NavManager.NavigateTo(userProfileUrl);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+	async Task AuthorProfile(int authorId)
+	{
+		try
+		{
+			var userProfileUrl = $"/userprofile/{authorId}";
+			NavManager.NavigateTo(userProfileUrl);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
 
-    }
+	}
 
-    async Task NovaPostagem()
-    {
-        NavManager.NavigateTo("/novapostagem");
-    }
+	async Task NovaPostagem()
+	{
+		NavManager.NavigateTo("/novapostagem");
+	}
 
-    async Task AddComment(int postId)
-    {
-        var newComment = new CommentModel
-            {
-                Content = newCommentContent,
-                PostId = postId,
-                CreatedAt = DateTime.Now,
-                AuthorId = int.Parse(IdUser)
-            };
-        try
-        {
-            //Faz requisição post para adicionar comentário
-            var result = await Http.PostAsJsonAsync("/api/comments", newComment);
-            if (result.IsSuccessStatusCode)
-            {
-                //Postagem Criada
-            }
-            else
-            {
-                //Erro ao criar postagem
-            }
-            StateHasChanged();
-            NavManager.NavigateTo("/feed");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
+	async Task AddComment(int postId)
+	{
+		var newComment = new CommentModel
+			{
+				Content = newCommentContent,
+				PostId = postId,
+				CreatedAt = DateTime.Now,
+				AuthorId = int.Parse(IdUser)
+			};
+		try
+		{
+			//Faz requisição post para adicionar comentário
+			var result = await Http.PostAsJsonAsync("/api/comments", newComment);
+			if (result.IsSuccessStatusCode)
+			{
+				//Postagem Criada
+			}
+			else
+			{
+				//Erro ao criar postagem
+			}
+			StateHasChanged();
+			NavManager.NavigateTo("/feed");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+	}
 
-    //PAGINAÇÃO E FILTRO POR AUTOR
-    private async Task Filtrar(ChangeEventArgs e)
-    {
-        filtro = e.Value.ToString();
-        Filter();
-    }
+	//PAGINAÇÃO E FILTRO POR AUTOR
+	private async Task Filtrar(ChangeEventArgs e)
+	{
+		filtro = e.Value.ToString();
+		Filter();
+	}
 
-    private void Filter()
-    {
-        ListPostsFiltered = ListPosts
-            .Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-            .Skip(pageIndex * pageSize)
-            .Take(pageSize)
-            .ToList();
-    }
+	private void Filter()
+	{
+		ListPostsFiltered = ListPosts
+			.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+			.Skip(pageIndex * pageSize)
+			.Take(pageSize)
+			.ToList();
+	}
 
-    private bool IsFirstPage()
-    {
-        return pageIndex == 0;
-    }
+	private bool IsFirstPage()
+	{
+		return pageIndex == 0;
+	}
 
-    private bool IsLastPage()
-    {
-        return (pageIndex + 1) * pageSize >= ListPosts.Count;
-    }
+	private bool IsLastPage()
+	{
+		return (pageIndex + 1) * pageSize >= ListPosts.Count;
+	}
 
-    private void PreviousPage()
-    {
-        if (!IsFirstPage())
-        {
-            pageIndex--;
-            Filter();
-        }
-    }
+	private void PreviousPage()
+	{
+		if (!IsFirstPage())
+		{
+			pageIndex--;
+			Filter();
+		}
+	}
 
-    private void NextPage()
-    {
-        if (!IsLastPage())
-        {
-            pageIndex++;
-            Filter();
-        }
-    }
+	private void NextPage()
+	{
+		if (!IsLastPage())
+		{
+			pageIndex++;
+			Filter();
+		}
+	}
 }

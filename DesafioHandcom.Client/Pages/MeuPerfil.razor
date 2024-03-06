@@ -7,14 +7,18 @@
 
 <PageTitle>Meu Perfil</PageTitle>
 
-<h1>Meu Perfil</h1>
+<div class="title">
+	<h1>Meu Perfil</h1>
+</div>
 
-@* Em uma aplicação real, não mostrar informações sigilosas *@
-
-<p>Id: @user.Id</p>
-<p>Name: @user.Name</p>
-<p>Email: @user.Email</p>
-<p>Created At: @user.CreatedAt</p>
+<div class="profile-container">
+	<div class="profile-info">
+		<p>Id: @user.Id</p>
+		<p>Name: @user.Name</p>
+		<p>Email: @user.Email</p>
+		<p>Created At: @user.CreatedAt</p>
+	</div>
+</div>
 
 @code {
 	private string IdUser = string.Empty;
