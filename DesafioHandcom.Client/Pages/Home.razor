@@ -15,8 +15,9 @@
 			Você está autorizado.
 		</Authorized>
 		<NotAuthorized>
-			<h1>Efetuar Login</h1>
-
+			<div class="title">
+				<h1>Efetuar Login</h1>
+			</div>
 			<EditForm Context="Login" Model="userlogin" OnSubmit="EfetuarLogin">
 				<div class="input">
 					<input type="email" id="Email" @bind-value="userlogin.Email" placeholder="Email" required><br><br>

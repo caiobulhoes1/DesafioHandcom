@@ -6,26 +6,31 @@
 @inject NavigationManager NavManager
 
 <PageTitle>Nova Postagem</PageTitle>
-
-<h1>Nova Postagem</h1>
-
-<EditForm Context="NovaPostagem" Model="post" OnSubmit="NewPost">
-	<div class="input">
-		<label for="title">Título:</label>
-		<input type="text" id="Title" @bind-value="post.Title" placeholder="Title" required><br><br>
-		<label for="content">Conteúdo:</label>
-		<input type="text" id="Content" @bind-value="post.Content" placeholder="Content" required><br><br>
-		<select class="form-select" @bind="post.TopicId" required>
-			<option value="">Selecione uma Opção</option>
-			@foreach (var topic in topics)
-			{
-				<option value="@topic.Id">@topic.Name</option>
-			}
-		</select><br>
-		<input class="btnLogin" type="submit" value="Finalizar Postagem">
+<div class="mainPage">
+	<div class="title">
+		<h1>Nova Postagem</h1>
 	</div>
-</EditForm>
 
+	<div class="form-container">
+		<EditForm Context="NovaPostagem" Model="post" OnSubmit="NewPost">
+			<div class="input">
+				<label for="title">Título:</label>
+				<input type="text" id="Title" @bind-value="post.Title" placeholder="Title" required><br><br>
+				<label for="content">Conteúdo:</label>
+				<textarea id="Content" @bind="post.Content" placeholder="Content" rows="2" required></textarea>
+				<label for="content">Tópico:</label>
+				<select class="form-select" @bind="post.TopicId" required>
+					<option value="">Selecione uma Opção</option>
+					@foreach (var topic in topics)
+					{
+						<option value="@topic.Id">@topic.Name</option>
+					}
+				</select><br>
+				<input class="btnLogin" type="submit" value="Finalizar Postagem">
+			</div>
+		</EditForm>
+	</div>
+</div>
 
 @code {
 	private string NomeUser = "";

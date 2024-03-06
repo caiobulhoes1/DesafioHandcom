@@ -1,0 +1,75 @@
+﻿.title{
+    text-align: center;
+}
+
+.form-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+    .form-container form {
+        display: inline-block;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: left;
+    }
+
+    .form-container label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .form-container input[type="text"]
+     {        
+        width: 50%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+
+    .form-container select {
+        width: 50%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        margin-left: 25%;
+    }
+
+    .form-container textarea {
+        width: 50%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        height: 100px;
+        max-height: 80px;
+    }
+
+    .form-container input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+@media screen and (max-width: 600px) {
+    .form-container form {
+        width: 80%;       
+    }
+
+    .form-container input[type="text"],
+    .form-container textarea {
+        width: 100%;
+    }
+
+    .form-container select {
+        width: 100%;
+        margin-left: 0%;
+    }
+}
