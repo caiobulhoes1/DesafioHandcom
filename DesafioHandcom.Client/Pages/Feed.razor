@@ -21,7 +21,7 @@
             <p>@post.Content</p>
         </div>
         <div class="post-footer">
-            <div class="post-author">Author: @post.Author.Name</div>
+            <div class="post-author">Author: <span class="author-name" @onclick="() => ShowAuthorDetails(post.Author.Id)">@post.Author.Name</span></div>
             <div class="post-topic">Topic: @post.Topic.Name</div>
         </div>
         <div class="comments">
@@ -30,7 +30,7 @@
             {
                 <div class="comment">
                     <div class="comment-header">
-                        <span class="comment-author">@comment.Author.Name</span>
+                        <span class="comment-author" @onclick="() => ShowAuthorDetails(comment.Author.Id)">@comment.Author.Name</span>
                         <span class="comment-date"> - @comment.CreatedAt.ToString("dd/MM/yyyy")</span>
                     </div>
                     <div class="comment-content">
@@ -67,6 +67,20 @@
         var result = await Http.GetFromJsonAsync<List<PostViewModel>>("GetPosts");
         if (result != null)
             ListPosts = result;
+
+    }
+
+    async Task ShowAuthorDetails(int authorId)
+    {
+        try
+        {
+            var userProfileUrl = $"/userprofile/{authorId}";
+            NavManager.NavigateTo(userProfileUrl);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
 
     }
 
