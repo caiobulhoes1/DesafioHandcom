@@ -1,0 +1,40 @@
+﻿@page "/userprofile/{userId:int}"
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h1>User Profile</h1>
+
+@if (user != null)
+{
+    <p>Name: @user.Name</p>
+    <p>Email: @user.Email</p>
+    <p>Created At: @user.CreatedAt.ToString("dd/MM/yyyy")</p>
+}
+else
+{
+    <p>User not found!</p>
+}
+
+@code {
+    [Parameter]
+    public int userId { get; set; }
+
+    private UserModel user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Buscar informações do usuário pelo ID
+            var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={userId}");
+            if (result != null)
+                user = result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while fetching user data: {ex.Message}");
+        }
+    }
+}

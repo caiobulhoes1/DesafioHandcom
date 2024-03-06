@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesafioHandcom.Server", "DesafioHandcom.Server\DesafioHandcom.Server.csproj", "{52F9076E-BF90-4761-98D1-CB4B3C69E48D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesafioHandcom.Server", "DesafioHandcom.Server\DesafioHandcom.Server.csproj", "{52F9076E-BF90-4761-98D1-CB4B3C69E48D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesafioHandcom.Shared", "DesafioHandcom.Shared\DesafioHandcom.Shared.csproj", "{0E1FEA78-B45D-4B06-9776-43C041BEBB72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesafioHandcom.Shared", "DesafioHandcom.Shared\DesafioHandcom.Shared.csproj", "{0E1FEA78-B45D-4B06-9776-43C041BEBB72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesafioHandcom.Client", "DesafioHandcom.Client\DesafioHandcom.Client.csproj", "{9E0A2CE8-E5D3-4039-9714-03979C9A429A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesafioHandcom.Client", "DesafioHandcom.Client\DesafioHandcom.Client.csproj", "{9E0A2CE8-E5D3-4039-9714-03979C9A429A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

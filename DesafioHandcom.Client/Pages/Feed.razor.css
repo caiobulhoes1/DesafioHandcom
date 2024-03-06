@@ -30,7 +30,6 @@
     }
 
 .post-footer {
-    display: flex;
     justify-content: space-between;
     align-items: center;
 }
@@ -39,4 +38,12 @@
 .post-topic {
     font-size: 14px;
     color: #333;
+}
+
+.author-name{
+    cursor: pointer;
+}
+
+.comment-author{
+    cursor: pointer;
 }
