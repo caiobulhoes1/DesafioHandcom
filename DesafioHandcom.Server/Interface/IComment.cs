@@ -1,7 +1,7 @@
 ﻿namespace DesafioHandcom.Server.Interface
 {
-	public class IComment
+	public interface IComment
 	{
-
-	}
+        public CommentModel NewComment(CommentModel model);
+    }
 }

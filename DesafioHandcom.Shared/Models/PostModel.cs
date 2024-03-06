@@ -24,5 +24,6 @@ namespace DesafioHandcom
 		public DateTime CreatedAt { get; set; }
 		public TopicModel Topic { get; set; }
 		public UserModel Author { get; set; }
-	}
+        public List<CommentViewModel> Comments { get; set; }
+    }
 }

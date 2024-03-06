@@ -34,6 +34,7 @@ using (var scope = builder.Services.BuildServiceProvider().CreateScope())
 }
 
 //Adiciona Instancia do Serviço
+builder.Services.AddScoped<IComment, CommentRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IPost, PostRepository>();
 builder.Services.AddScoped<ITopic, TopicRepository>();

@@ -23,6 +23,7 @@ namespace DesafioHandcom.Server.Controllers
 		[Route("/efetuarlogin")]
 		public async Task<IActionResult> Login(UserModel user)
 		{
+			//Verifica se o usuário e senha estão corretos. OBS: Não adicionei criptografia no password
 			var getUser = _appDbContext.Users.FirstOrDefault(m => m.Email == user.Email && m.Password == user.Password);
 			if (getUser == null)
 			{

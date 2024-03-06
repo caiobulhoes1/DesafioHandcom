@@ -24,22 +24,85 @@
             <div class="post-author">Author: @post.Author.Name</div>
             <div class="post-topic">Topic: @post.Topic.Name</div>
         </div>
+        <div class="comments">
+            <h3>Comments</h3>
+            @foreach (var comment in post.Comments)
+            {
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">@comment.Author.Name</span>
+                        <span class="comment-date"> - @comment.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>@comment.Content</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="add-comment">
+            <h3>Add Comment</h3>
+            <form @onsubmit="async () => await AddComment(post.Id)">
+                <div class="form-group">
+                    <textarea id="commentContent" rows="4" @bind="newCommentContent"></textarea>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     </div>
 }
 
 @code {
-	List<PostViewModel> ListPosts = new List<PostViewModel>();
+    List<PostViewModel> ListPosts = new List<PostViewModel>();
 
-	protected override async Task OnInitializedAsync()
-	{
-		var result = await Http.GetFromJsonAsync<List<PostViewModel>>("GetPosts");
-		if (result != null)
-			ListPosts = result;
+    private string NomeUser = "";
+    private string IdUser = string.Empty;
+    private string newCommentContent;
 
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
+        IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
-	async Task NovaPostagem()
-	{
-		NavManager.NavigateTo("/novapostagem");
-	}
+        var result = await Http.GetFromJsonAsync<List<PostViewModel>>("GetPosts");
+        if (result != null)
+            ListPosts = result;
+
+    }
+
+    async Task NovaPostagem()
+    {
+        NavManager.NavigateTo("/novapostagem");
+    }
+
+    async Task AddComment(int postId)
+    {
+        var newComment = new CommentModel
+            {
+                Content = newCommentContent,
+                PostId = postId,
+                CreatedAt = DateTime.Now,
+                AuthorId = int.Parse(IdUser)
+            };
+
+        try
+        {
+            //Faz requisição post para adicionar comentário
+            var result = await Http.PostAsJsonAsync("/api/comments", newComment);
+            if (result.IsSuccessStatusCode)
+            {
+                //Postagem Criada
+            }
+            else
+            {
+                //Erro ao criar postagem
+            }
+            StateHasChanged();
+            NavManager.NavigateTo("/feed");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
