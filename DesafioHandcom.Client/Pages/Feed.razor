@@ -10,7 +10,11 @@
 
 <button @onclick="NovaPostagem">Nova Postagem</button>
 
-@foreach (var post in ListPosts)
+<div class="formFilter">
+    <input type="text" class="FiltroAutor" id="Nome" @bind-value="filtro" @oninput="Filtrar" placeholder="Filtrar por Autor"><br>
+</div>
+
+@foreach (var post in ListPostsFiltered)
 {
     <div class="post">
         <div class="post-header">
@@ -21,7 +25,7 @@
             <p>@post.Content</p>
         </div>
         <div class="post-footer">
-            <div class="post-author">Author: <span class="author-name" @onclick="() => ShowAuthorDetails(post.Author.Id)">@post.Author.Name</span></div>
+            <div class="post-author">Author: <span class="author-name" @onclick="() => AuthorProfile(post.Author.Id)">@post.Author.Name</span></div>
             <div class="post-topic">Topic: @post.Topic.Name</div>
         </div>
         <div class="comments">
@@ -30,7 +34,7 @@
             {
                 <div class="comment">
                     <div class="comment-header">
-                        <span class="comment-author" @onclick="() => ShowAuthorDetails(comment.Author.Id)">@comment.Author.Name</span>
+                        <span class="comment-author" @onclick="() => AuthorProfile(comment.Author.Id)">@comment.Author.Name</span>
                         <span class="comment-date"> - @comment.CreatedAt.ToString("dd/MM/yyyy")</span>
                     </div>
                     <div class="comment-content">
@@ -51,12 +55,23 @@
     </div>
 }
 
+<div class="pagination">
+    <button disabled="@IsFirstPage()" @onclick="PreviousPage">Previous</button>
+    <span>Page @(pageIndex + 1) of @(totalPages)</span>
+    <button disabled="@IsLastPage()" @onclick="NextPage">Next</button>
+</div>
+
 @code {
     List<PostViewModel> ListPosts = new List<PostViewModel>();
+    List<PostViewModel> ListPostsFiltered = new List<PostViewModel>();
 
-    private string NomeUser = "";
+    private int pageIndex = 0;
+    private int pageSize = 2;
+    private string NomeUser = string.Empty;
+    private string filtro = "";
     private string IdUser = string.Empty;
-    private string newCommentContent;
+    private string newCommentContent = string.Empty;
+    private int totalPages;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,13 +79,20 @@
         NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
         IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
-        var result = await Http.GetFromJsonAsync<List<PostViewModel>>("GetPosts");
+
+        var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
         if (result != null)
             ListPosts = result;
+            ListPostsFiltered = ListPosts
+            .Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToList();
 
+        totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
     }
 
-    async Task ShowAuthorDetails(int authorId)
+    async Task AuthorProfile(int authorId)
     {
         try
         {
@@ -98,7 +120,6 @@
                 CreatedAt = DateTime.Now,
                 AuthorId = int.Parse(IdUser)
             };
-
         try
         {
             //Faz requisição post para adicionar comentário
@@ -117,6 +138,50 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+
+    //PAGINAÇÃO E FILTRO POR AUTOR
+    private async Task Filtrar(ChangeEventArgs e)
+    {
+        filtro = e.Value.ToString();
+        Filter();
+    }
+
+    private void Filter()
+    {
+        ListPostsFiltered = ListPosts
+            .Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+            .Skip(pageIndex * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
+
+    private bool IsFirstPage()
+    {
+        return pageIndex == 0;
+    }
+
+    private bool IsLastPage()
+    {
+        return (pageIndex + 1) * pageSize >= ListPosts.Count;
+    }
+
+    private void PreviousPage()
+    {
+        if (!IsFirstPage())
+        {
+            pageIndex--;
+            Filter();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (!IsLastPage())
+        {
+            pageIndex++;
+            Filter();
         }
     }
 }

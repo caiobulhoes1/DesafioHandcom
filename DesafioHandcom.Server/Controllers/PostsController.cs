@@ -37,7 +37,7 @@ namespace DesafioHandcom.Server.Controllers
 		}
 
         [HttpGet]
-        [Route("GetPosts")]
+        [Route("/api/getposts")]
         public async Task<ActionResult<List<PostViewModel>>> GetPosts()
         {
             try
@@ -48,7 +48,61 @@ namespace DesafioHandcom.Server.Controllers
                 // Mapeia os PostModels para PostViewModels
                 var postViewModels = new List<PostViewModel>();
 
-                foreach (var post in posts)
+                foreach (var post in posts.OrderByDescending(x => x.CreatedAt))
+                {
+                    var postViewModel = new PostViewModel
+                    {
+                        Id = post.Id,
+                        Title = post.Title,
+                        Content = post.Content,
+                        AuthorId = post.AuthorId,
+                        TopicId = post.TopicId,
+                        CreatedAt = post.CreatedAt,
+
+                        // Busca o autor e o tópico pelo ID
+                        Author = _appDbContext.Users.FirstOrDefault(u => u.Id == post.AuthorId),
+                        Topic = _appDbContext.Topics.FirstOrDefault(t => t.Id == post.TopicId),
+
+                        // Busca os comentários relacionados ao post
+                        Comments = await _appDbContext.Comments
+                            .Where(c => c.PostId == post.Id)
+                            .Select(c => new CommentViewModel
+                            {
+                                Id = c.Id,
+                                Content = c.Content,
+                                AuthorId = c.AuthorId,
+                                PostId = c.PostId,
+                                CreatedAt = c.CreatedAt,
+                                // Busca o autor pelo ID
+                                Author = _appDbContext.Users.FirstOrDefault(u => u.Id == c.AuthorId)
+                            })
+                            .ToListAsync()
+                    };
+
+                    postViewModels.Add(postViewModel);
+                }
+
+                return postViewModels;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("/api/getPostById")]
+        public async Task<ActionResult<List<PostViewModel>>> GetPostById(int id)
+        {
+            try
+            {
+                // Busca post pelo ID
+                var posts = await _appDbContext.Posts.Where(x => x.Id == id).ToListAsync();
+
+                // Mapeia os PostModels para PostViewModels
+                var postViewModels = new List<PostViewModel>();
+
+                foreach (var post in posts.OrderByDescending(x => x.CreatedAt))
                 {
                     var postViewModel = new PostViewModel
                     {
