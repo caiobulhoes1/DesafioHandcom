@@ -3,11 +3,14 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow-y: auto;
 }
 
 main {
     flex: 1;
+    height: 100vh;
     background-color: aliceblue;
+    overflow-y: auto;
 }
 
 .sidebar {
