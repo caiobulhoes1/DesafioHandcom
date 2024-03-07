@@ -4,22 +4,22 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject HttpClient Http
 @inject NavigationManager NavManager
-<div class="page">
-	<PageTitle>Meu Perfil</PageTitle>
 
-	<div class="title">
-		<h1>Meu Perfil</h1>
-	</div>
+<PageTitle>Meu Perfil</PageTitle>
 
-	<div class="profile-container">
-		<div class="profile-info">
-			<p>Id: @user.Id</p>
-			<p>Name: @user.Name</p>
-			<p>Email: @user.Email</p>
-			<p>Created At: @user.CreatedAt</p>
-		</div>
+<div class="title">
+	<h1>Meu Perfil</h1>
+</div>
+
+<div class="profile-container">
+	<div class="profile-info">
+		<p>Id: @user.Id</p>
+		<p>Name: @user.Name</p>
+		<p>Email: @user.Email</p>
+		<p>Created At: @user.CreatedAt</p>
 	</div>
 </div>
+
 @code {
 	private string IdUser = string.Empty;
 
@@ -40,6 +40,6 @@
 		{
 			NavManager.NavigateTo("/");
 		}
-
+		
 	}
 }
