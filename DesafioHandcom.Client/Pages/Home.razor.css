@@ -10,7 +10,7 @@
     .input input[type="email"],
     .input input[type="password"],
     .input input[type="submit"] {
-        width: 20%;
+        min-width: 30%;
         padding: 10px;
         margin-bottom: 15px;
         border: 1px solid #ccc;
@@ -36,3 +36,5 @@
         .input input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+

@@ -8,28 +8,27 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject SweetAlertService swal
 @inject ILocalStorageService LocalStorage
-
-<PageTitle>Home</PageTitle>
-<CascadingAuthenticationState>
-	<AuthorizeView>
-		<Authorized>
-			Você está autorizado.
-		</Authorized>
-		<NotAuthorized>
-			<div class="title">
-				<h1>Efetuar Login</h1>
-			</div>
-			<EditForm Context="Login" Model="userlogin" OnSubmit="EfetuarLogin">
-				<div class="input">
-					<input type="email" id="Email" @bind-value="userlogin.Email" placeholder="Email" required><br><br>
-					<input type="password" id="Senha" @bind-value="userlogin.Password" placeholder="Password" required><br><br>
-					<input class="btnLogin" type="submit" value="Logar">
+	<PageTitle>Home</PageTitle>
+	<CascadingAuthenticationState>
+		<AuthorizeView>
+			<Authorized>
+				Você está autorizado.
+			</Authorized>
+			<NotAuthorized>
+				<div class="title">
+					<h1>Efetuar Login</h1>
 				</div>
-			</EditForm>
-		</NotAuthorized>
+				<EditForm Context="Login" Model="userlogin" OnSubmit="EfetuarLogin">
+					<div class="input">
+						<input type="email" id="Email" @bind-value="userlogin.Email" placeholder="Email" required><br><br>
+						<input type="password" id="Senha" @bind-value="userlogin.Password" placeholder="Password" required><br><br>
+						<input class="btnLogin" type="submit" value="Logar">
+					</div>
+				</EditForm>
+			</NotAuthorized>
 
-	</AuthorizeView>
-</CascadingAuthenticationState>
+		</AuthorizeView>
+	</CascadingAuthenticationState>
 @code {
 	UserModel userlogin = new UserModel();
 

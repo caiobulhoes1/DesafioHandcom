@@ -5,34 +5,34 @@
 @inject HttpClient Http
 @inject SweetAlertService swal
 @inject NavigationManager NavManager
+<div class="page">
+	<PageTitle>Nova Postagem</PageTitle>
+	<div class="mainPage">
+		<div class="title">
+			<h1>Nova Postagem</h1>
+		</div>
 
-<PageTitle>Nova Postagem</PageTitle>
-<div class="mainPage">
-	<div class="title">
-		<h1>Nova Postagem</h1>
-	</div>
-
-	<div class="form-container">
-		<EditForm Context="NovaPostagem" Model="post" OnSubmit="NewPost">
-			<div class="input">
-				<label for="title">Título:</label>
-				<input type="text" id="Title" @bind-value="post.Title" placeholder="Title" required><br><br>
-				<label for="content">Conteúdo:</label>
-				<textarea id="Content" @bind="post.Content" placeholder="Content" rows="2" required></textarea>
-				<label for="content">Tópico:</label>
-				<select class="form-select" @bind="post.TopicId" required>
-					<option value="">Selecione uma Opção</option>
-					@foreach (var topic in topics)
-					{
-						<option value="@topic.Id">@topic.Name</option>
-					}
-				</select><br>
-				<input class="btnLogin" type="submit" value="Finalizar Postagem">
-			</div>
-		</EditForm>
+		<div class="form-container">
+			<EditForm Context="NovaPostagem" Model="post" OnSubmit="NewPost">
+				<div class="input">
+					<label for="title">Título:</label>
+					<input type="text" id="Title" @bind-value="post.Title" placeholder="Title" required><br><br>
+					<label for="content">Conteúdo:</label>
+					<textarea id="Content" @bind="post.Content" placeholder="Content" rows="2" maxlength="300" required></textarea>
+					<label for="content">Tópico:</label>
+					<select class="form-select" @bind="post.TopicId" required>
+						<option value="">Selecione uma Opção</option>
+						@foreach (var topic in topics)
+						{
+							<option value="@topic.Id">@topic.Name</option>
+						}
+					</select><br>
+					<input class="btnLogin" type="submit" value="Finalizar Postagem">
+				</div>
+			</EditForm>
+		</div>
 	</div>
 </div>
-
 @code {
 	private string NomeUser = "";
 	private string IdUser = string.Empty;
@@ -59,7 +59,7 @@
 		{
 			NavManager.NavigateTo("/");
 		}
-		
+
 	}
 
 	async Task NewPost()
@@ -85,7 +85,7 @@
 			{
 				//Erro ao criar postagem - Mensagem de Erro.
 				string errorMessage = await result.Content.ReadAsStringAsync();
-				
+
 				await swal.FireAsync(new SweetAlertOptions
 					{
 						Title = "Erro!",
