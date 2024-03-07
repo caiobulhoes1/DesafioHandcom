@@ -4,21 +4,31 @@ Projeto desenvolvido com o intuíto de avaliação no processo seletivo da Handc
 
 O objetivo foi desenvolver um aplicativo Web que permita os usuários navegar, pesquisar e criar postagens sobre vários tópicos.
 
-Tecnologias utilizadas:
+# Tecnologias utilizadas
+
   Back-End: .NET 4.8, C# e Blazor 8
+  
   Front-End: Html e CSS
 
-Bibliotecas utilizadas:
+# Bibliotecas utilizadas
+
   Blazored.LocalStorage
+  
   SweetAlert2
+  
   AspNetCore.Authorization
+  
   AspNetCore.Authentication.JwtBearer
+  
   EntityFrameworkCore.InMemory
 
-A aplicação contém 3 projetos:
-  DesafioHandcom.Client
-  DesafioHandcom.Server
-  DesafioHandcom.Shared
+# A aplicação contém 3 projetos:
+
+  DesafioHandcom.Client (Projeto onde fica toda a parte de iteração com o usuário)
+  
+  DesafioHandcom.Server (Projeto onde toda a regra de negócio é desenvolvida)
+  
+  DesafioHandcom.Shared (Projeto onde está alocado os Models e DTO para comunicação entre o Client e o Server)
 
 # Sobre o Projeto
 
