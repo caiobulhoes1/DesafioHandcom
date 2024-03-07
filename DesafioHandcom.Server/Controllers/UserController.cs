@@ -22,7 +22,7 @@ namespace DesafioHandcom.Server.Controllers
 
             if (getAuthor == null)
             {
-                return NotFound();
+                return NotFound("Id não existente no banco de dados!");
             }
 
             var userDto = new UserDTO
@@ -48,7 +48,7 @@ namespace DesafioHandcom.Server.Controllers
                 CreatedAt = userDto.CreatedAt
             }).ToList();
 
-            return listAuthors == null ? NotFound() : Ok(listAuthors);
+            return listAuthors == null ? NotFound("Não há registros existentes no banco de dados!") : Ok(listAuthors);
         }
     }
 }

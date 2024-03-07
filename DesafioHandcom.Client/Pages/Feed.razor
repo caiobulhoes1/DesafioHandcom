@@ -2,6 +2,7 @@
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject HttpClient Http
+@inject SweetAlertService swal
 @inject NavigationManager NavManager
 
 <PageTitle>Feed</PageTitle>
@@ -80,7 +81,7 @@
 else
 {
 	<div class="msg">
-		<h1>Não há nenhum post criado</h1
+		<h1>Não há nenhum post criado.</h1
 	</div>
 }
 @code {
@@ -98,20 +99,28 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-		NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
-		IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
+		if (authState.User.Identity.IsAuthenticated)
+		{
+			NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
+			IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
 
-		var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
-		if (result != null)
-			ListPosts = result;
-		ListPostsFiltered = ListPosts
-		.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-			.Skip(pageIndex * pageSize)
-			.Take(pageSize)
-			.ToList();
+			var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
+			if (result != null)
+				ListPosts = result;
+			ListPostsFiltered = ListPosts
+				.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+				.Skip(pageIndex * pageSize)
+				.Take(pageSize)
+				.ToList();
 
-		totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
+			totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
+		}
+		else
+		{
+			NavManager.NavigateTo("/");
+		}
+
 	}
 
 	async Task AuthorProfile(int authorId)
@@ -148,14 +157,40 @@ else
 			var result = await Http.PostAsJsonAsync("/api/comments", newComment);
 			if (result.IsSuccessStatusCode)
 			{
-				//Postagem Criada
+				//Postagem Criada - Mensagem de Sucesso.
+				await swal.FireAsync(new SweetAlertOptions
+				{
+					Title = "Sucesso!",
+					Text = "Comentário adicionado!",
+					Icon = SweetAlertIcon.Success
+				});
 			}
 			else
 			{
-				//Erro ao criar postagem
+				string errorMessage = await result.Content.ReadAsStringAsync();
+				//Erro ao criar postagem - Mensagem de Erro.
+				await swal.FireAsync(new SweetAlertOptions
+				{
+					Title = "Erro!",
+					Text = $"{errorMessage}",
+					Icon = SweetAlertIcon.Error
+				});
 			}
+
+			//Atualiza a Lista com o novo comentário						
+			var resultList = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
+			if (resultList != null)
+				ListPosts = resultList;
+			ListPostsFiltered = ListPosts
+				.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+				.Skip(pageIndex * pageSize)
+				.Take(pageSize)
+				.ToList();
+
+			//Limpa a mensagem escrita.
+			newCommentContent = "";
+
 			StateHasChanged();
-			NavManager.NavigateTo("/feed");
 		}
 		catch (Exception ex)
 		{

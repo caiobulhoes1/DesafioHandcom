@@ -3,6 +3,7 @@
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject HttpClient Http
+@inject SweetAlertService swal
 @inject NavigationManager NavManager
 
 <PageTitle>Nova Postagem</PageTitle>
@@ -43,14 +44,22 @@
 	{
 		//Resgata o usuário logado.
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-		NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
-		IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
+		if (authState.User.Identity.IsAuthenticated)
+		{
+			NomeUser = authState.User.FindFirst(c => c.Type == "unique_name")?.Value;
+			IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
 
-		//Resgata os Topicos cadastrados no banco de dados
-		var result = await Http.GetFromJsonAsync<List<TopicModel>>("GetTopics");
-		if (result != null)
-			topics = result;
+			//Resgata os Topicos cadastrados no banco de dados
+			var result = await Http.GetFromJsonAsync<List<TopicModel>>("GetTopics");
+			if (result != null)
+				topics = result;
+		}
+		else
+		{
+			NavManager.NavigateTo("/");
+		}
+		
 	}
 
 	async Task NewPost()
@@ -65,10 +74,24 @@
 			if (result.IsSuccessStatusCode)
 			{
 				//Postagem Criada
+				await swal.FireAsync(new SweetAlertOptions
+					{
+						Title = "Sucesso!",
+						Text = "Postagem criada!",
+						Icon = SweetAlertIcon.Success
+					});
 			}
 			else
 			{
-				//Erro ao criar postagem
+				//Erro ao criar postagem - Mensagem de Erro.
+				string errorMessage = await result.Content.ReadAsStringAsync();
+				
+				await swal.FireAsync(new SweetAlertOptions
+					{
+						Title = "Erro!",
+						Text = $"{errorMessage}",
+						Icon = SweetAlertIcon.Error
+					});
 			}
 			NavManager.NavigateTo("/feed");
 		}

@@ -27,7 +27,7 @@ namespace DesafioHandcom.Server.Controllers
 			var getUser = _appDbContext.Users.FirstOrDefault(m => m.Email == user.Email && m.Password == user.Password);
 			if (getUser == null)
 			{
-				return BadRequest("Usuário não encontrado");
+				return BadRequest("Usuário não encontrado e/ou credenciais incorretas");
 			}
 			else
 			{

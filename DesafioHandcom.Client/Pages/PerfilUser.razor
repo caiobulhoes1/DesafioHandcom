@@ -4,18 +4,29 @@
 @inject HttpClient Http
 @inject NavigationManager NavManager
 
-<h1>User Profile</h1>
+<div class="title">
+    <h1>Perfil Usuário</h1>
+</div>
 
 @if (user != null)
 {
-    <p>Name: @user.Name</p>
-    <p>Email: @user.Email</p>
-    <p>Created At: @user.CreatedAt.ToString("dd/MM/yyyy")</p>
+    <div class="profile-container">
+        <div class="profile-info">
+            <p>Id: @user.Id</p>
+            <p>Name: @user.Name</p>
+            <p>Email: @user.Email</p>
+            <p>Created At: @user.CreatedAt</p>
+        </div>
+    </div>
 }
 else
 {
     <p>User not found!</p>
 }
+
+
+
+
 
 @code {
     [Parameter]
@@ -25,16 +36,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
         {
-            // Buscar informações do usuário pelo ID
-            var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={userId}");
-            if (result != null)
-                user = result;
+            try
+            {
+                // Buscar informações do usuário pelo ID
+                var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={userId}");
+                if (result != null)
+                    user = result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while fetching user data: {ex.Message}");
+            }
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"An error occurred while fetching user data: {ex.Message}");
+            NavManager.NavigateTo("/");
         }
+
+        
     }
 }

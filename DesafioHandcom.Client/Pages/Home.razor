@@ -6,6 +6,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject SweetAlertService swal
 @inject ILocalStorageService LocalStorage
 
 <PageTitle>Home</PageTitle>
@@ -21,7 +22,7 @@
 			<EditForm Context="Login" Model="userlogin" OnSubmit="EfetuarLogin">
 				<div class="input">
 					<input type="email" id="Email" @bind-value="userlogin.Email" placeholder="Email" required><br><br>
-					<input type="password" id="Senha" @bind-value="userlogin.Password" placeholder="Password"><br><br>
+					<input type="password" id="Senha" @bind-value="userlogin.Password" placeholder="Password" required><br><br>
 					<input class="btnLogin" type="submit" value="Logar">
 				</div>
 			</EditForm>
@@ -42,6 +43,18 @@
 			var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 			if (authState.User.Identity.IsAuthenticated)
 				NavManager.NavigateTo("/");
+		}
+		else
+		{
+			//Erro ao criar postagem - Mensagem de Erro.
+			string errorMessage = await result.Content.ReadAsStringAsync();
+
+			await swal.FireAsync(new SweetAlertOptions
+				{
+					Title = "Erro!",
+					Text = $"{errorMessage}",
+					Icon = SweetAlertIcon.Error
+				});
 		}
 	}
 }

@@ -1,0 +1,19 @@
+﻿.title {
+    text-align: center;
+}
+
+.profile-container {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.profile-info {
+    display: inline-block;
+    text-align: left;
+    max-width: 400px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    background-color: lightsteelblue;
+}
