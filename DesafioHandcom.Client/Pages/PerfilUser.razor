@@ -3,59 +3,57 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject HttpClient Http
 @inject NavigationManager NavManager
+<div class="page">
+	<div class="title">
+		<h1>Perfil Usuário</h1>
+	</div>
 
-<div class="title">
-    <h1>Perfil Usuário</h1>
+	@if (user != null)
+	{
+		<div class="profile-container">
+			<div class="profile-info">
+				<p>Id: @user.Id</p>
+				<p>Name: @user.Name</p>
+				<p>Email: @user.Email</p>
+				<p>Created At: @user.CreatedAt</p>
+			</div>
+		</div>
+	}
+	else
+	{
+		<p>User not found!</p>
+	}
+
 </div>
 
-@if (user != null)
-{
-    <div class="profile-container">
-        <div class="profile-info">
-            <p>Id: @user.Id</p>
-            <p>Name: @user.Name</p>
-            <p>Email: @user.Email</p>
-            <p>Created At: @user.CreatedAt</p>
-        </div>
-    </div>
-}
-else
-{
-    <p>User not found!</p>
-}
-
-
-
-
-
 @code {
-    [Parameter]
-    public int userId { get; set; }
+	[Parameter]
+	public int userId { get; set; }
 
-    private UserModel user;
+	private UserModel user;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        if (authState.User.Identity.IsAuthenticated)
-        {
-            try
-            {
-                // Buscar informações do usuário pelo ID
-                var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={userId}");
-                if (result != null)
-                    user = result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred while fetching user data: {ex.Message}");
-            }
-        }
-        else
-        {
-            NavManager.NavigateTo("/");
-        }
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		if (authState.User.Identity.IsAuthenticated)
+		{
+			try
+			{
+				// Buscar informações do usuário pelo ID
+				var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={userId}");
+				if (result != null)
+					user = result;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred while fetching user data: {ex.Message}");
+			}
+		}
+		else
+		{
+			NavManager.NavigateTo("/");
+		}
 
-        
-    }
+
+	}
 }

@@ -25,18 +25,16 @@
 
 	@foreach (var post in ListPostsFiltered)
 	{
-		<div class="post">
+<div class="post">
     <div class="post-footer">
         <div class="post-author">
             <span class="author-name" @onclick="() => AuthorProfile(post.Author.Id)">@post.Author.Name</span>
         </div>
-		    <div class="post-header">
+	 <div class="post-header">
 		<div class="post-topic">@post.Topic.Name</div>
         <span class="post-date"> - @post.CreatedAt.ToString("dd/MM/yyyy")</span>        			
+    </div>       
     </div>
-        
-    </div>
-
     <div class="post-content">
 		<h2 class="post-title">@post.Title</h2>	
         <p>@post.Content</p>
@@ -69,7 +67,7 @@
 @*         <h3>Add Comment</h3> *@
         <form @onsubmit="async () => await AddComment(post.Id)">
             <div class="form-group">
-                <textarea id="commentContent" rows="4" @bind="newCommentContent" placeholder="Adicionar novo comentário" required></textarea>
+                <textarea id="commentContent" rows="4" @bind="newCommentContent" placeholder="Adicionar novo comentário" maxlength="100" required></textarea>
             </div>
             <button class="btnSubmit" type="submit">Comentar</button>
         </form>
