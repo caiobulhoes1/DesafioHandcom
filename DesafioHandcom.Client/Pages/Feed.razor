@@ -14,9 +14,14 @@
 
 @if (ListPosts.Any())
 {
-	<div class="filtro">
-		<input type="text" class="FiltroAutor" id="Nome" @bind-value="filtro" @oninput="Filtrar" placeholder="Filtrar por Autor"><br>
-	</div>
+<div class="filtro-container">
+    <div class="filtro">
+        <input type="text" class="FiltroAutor" id="filtroAutor" @bind-value="filtro" @oninput="Filtrar" placeholder="Filtrar por Autor">
+    </div>
+    <div class="filtro">
+        <input type="text" class="FiltroTopico" id="filtroTopico" @bind-value="filtrotopico" @oninput="FiltrarTopico" placeholder="Filtrar por Tópico">
+    </div>
+</div>
 
 	@foreach (var post in ListPostsFiltered)
 	{
@@ -92,6 +97,7 @@ else
 	private int pageSize = 1;
 	private string NomeUser = string.Empty;
 	private string filtro = "";
+	private string filtrotopico = "";
 	private string IdUser = string.Empty;
 	private string newCommentContent = string.Empty;
 	private int totalPages;
@@ -108,11 +114,14 @@ else
 			var result = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
 			if (result != null)
 				ListPosts = result;
-			ListPostsFiltered = ListPosts
-				.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-				.Skip(pageIndex * pageSize)
-				.Take(pageSize)
-				.ToList();
+				ListPostsFiltered = ListPosts
+					.Where(p => 
+					    (string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase)) &&
+					    (string.IsNullOrWhiteSpace(filtrotopico) || p.Topic.Name.Contains(filtrotopico, StringComparison.OrdinalIgnoreCase))
+					)
+					.Skip(pageIndex * pageSize)
+					.Take(pageSize)
+					.ToList();
 
 			totalPages = ListPosts.Any() ? (int)Math.Ceiling(ListPosts.Count / (double)pageSize) : 0;
 		}
@@ -181,11 +190,14 @@ else
 			var resultList = await Http.GetFromJsonAsync<List<PostViewModel>>("/api/getposts");
 			if (resultList != null)
 				ListPosts = resultList;
-			ListPostsFiltered = ListPosts
-				.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-				.Skip(pageIndex * pageSize)
-				.Take(pageSize)
-				.ToList();
+				ListPostsFiltered = ListPosts
+					.Where(p => 
+					    (string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase)) &&
+					    (string.IsNullOrWhiteSpace(filtrotopico) || p.Topic.Name.Contains(filtrotopico, StringComparison.OrdinalIgnoreCase))
+					)
+					.Skip(pageIndex * pageSize)
+					.Take(pageSize)
+					.ToList();
 
 			//Limpa a mensagem escrita.
 			newCommentContent = "";
@@ -198,17 +210,28 @@ else
 		}
 	}
 
-	//PAGINAÇÃO E FILTRO POR AUTOR
+
+
+	//PAGINAÇÃO E FILTRO POR AUTOR E TOPICO
 	private async Task Filtrar(ChangeEventArgs e)
 	{
 		filtro = e.Value.ToString();
 		Filter();
 	}
 
+	private async Task FiltrarTopico(ChangeEventArgs e)
+	{
+		filtrotopico = e.Value.ToString();
+		Filter();
+	}
+
 	private void Filter()
 	{
 		ListPostsFiltered = ListPosts
-			.Where(p => string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+			.Where(p => 
+			    (string.IsNullOrWhiteSpace(filtro) || p.Author.Name.Contains(filtro, StringComparison.OrdinalIgnoreCase)) &&
+			    (string.IsNullOrWhiteSpace(filtrotopico) || p.Topic.Name.Contains(filtrotopico, StringComparison.OrdinalIgnoreCase))
+			)
 			.Skip(pageIndex * pageSize)
 			.Take(pageSize)
 			.ToList();
