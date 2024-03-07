@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using CurrieTechnologies.Razor.SweetAlert2;
 using DesafioHandcom.Client;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -13,5 +14,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddSweetAlert2();
 
 await builder.Build().RunAsync();

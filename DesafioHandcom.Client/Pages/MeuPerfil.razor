@@ -28,10 +28,18 @@
 	protected override async Task OnInitializedAsync()
 	{
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-		IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
+		if (authState.User.Identity.IsAuthenticated)
+		{
+			IdUser = authState.User.FindFirst(c => c.Type == "Id")?.Value;
 
-		var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={IdUser}");
-		if (result != null)
-			user = result;
+			var result = await Http.GetFromJsonAsync<UserModel>($"GetAuthorById?Id={IdUser}");
+			if (result != null)
+				user = result;
+		}
+		else
+		{
+			NavManager.NavigateTo("/");
+		}
+		
 	}
 }
