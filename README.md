@@ -24,7 +24,7 @@ O objetivo foi desenvolver um aplicativo Web que permita os usuários navegar, p
 
 # A aplicação contém 3 projetos:
 
-  DesafioHandcom.Client (Projeto onde fica toda a parte de iteração com o usuário)
+  DesafioHandcom.Client (Projeto onde fica toda a parte de interação com o usuário)
   
   DesafioHandcom.Server (Projeto onde toda a regra de negócio é desenvolvida)
   
