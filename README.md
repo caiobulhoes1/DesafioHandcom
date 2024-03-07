@@ -30,13 +30,18 @@ A aplicação foi desenvolvida utilizando banco de dados InMemory
 Ao executar a aplicação, algumas tabelas são preenchidas com informações "mock"
 
 Na tabela Users é inserido as seguintes informações:
-	dbContext.Users.Add(new UserModel { Id = 1, Name = "User 1", Email = "user1@handcom.com", Password = "user1", CreatedAt = DateTime.Now });
-	dbContext.Users.Add(new UserModel { Id = 2, Name = "User 2", Email = "user2@handcom.com", Password = "user2", CreatedAt = DateTime.Now });
+
+{ Id = 1, Name = "User 1", Email = "user1@handcom.com", Password = "user1", CreatedAt = DateTime.Now });
+
+{ Id = 2, Name = "User 2", Email = "user2@handcom.com", Password = "user2", CreatedAt = DateTime.Now });
  
 Na tabela Topics é inserido as seguintes informações:
-  dbContext.Topics.Add(new TopicModel { Id = 1, Name = "Carro" });
-	dbContext.Topics.Add(new TopicModel { Id = 2, Name = "Futebol" });
-	dbContext.Topics.Add(new TopicModel { Id = 3, Name = "Tecnologia" });
+
+{ Id = 1, Name = "Carro" });
+
+{ Id = 2, Name = "Futebol" });
+
+{ Id = 3, Name = "Tecnologia" });
 
 Para efetuar os testes na aplicação, basta efetuar o login com algum usuário dito anteriormente.
 
